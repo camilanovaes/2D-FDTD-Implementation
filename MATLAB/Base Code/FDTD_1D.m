@@ -49,7 +49,7 @@ for t = 1:nt
   plot(1:numCells, Ex+1,'r','linewidth',2);
   hold on 
   plot(1:numCells, Hy-1,'b','linewidth',2);
-  axis([1 1000 -2 2]);
+  axis([1 200 -2 2]);
   grid on;
   hold off
   legend('Ex','Hy');
