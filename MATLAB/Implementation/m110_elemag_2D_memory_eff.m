@@ -8,7 +8,7 @@ nt = 1000;
 
 %constants
 eps_0 = 8.854e-12;
-eps_1 = eps_0 * 40;
+eps_1 = eps_0 * 5;
 mi_0 = pi*4e-7;
 C_0 = 299792458; 	% m/s
 
@@ -37,22 +37,22 @@ px3 = px1 + 2;     py3 = py1;
 % so the figure won't show up%
 figr = figure('Visible', 'On' );
 
-% colormap %
+colormap('jet');
 
 for n = 0:1:(nt-1)
 	t = n*dt;
     
     % font %    
-    Ez(px1, py1) = exp(-((t-T).^2)/((std_dev.^2)*.2));
-    Ez(px2, py2) = exp(-((t-T).^2)/((std_dev.^2)*.2));
-    Ez(px3, py3) = exp(-((t-T).^2)/((std_dev.^2)*.2));
+    Ez(px1, py1) = exp(-((t-T).^2)/((std_dev.^2)*.2))* sin(2*pi*30e9*t);
+    Ez(px2, py2) = exp(-((t-T).^2)/((std_dev.^2)*.2))* sin(2*pi*30e9*t);
+    Ez(px3, py3) = exp(-((t-T).^2)/((std_dev.^2)*.2))* sin(2*pi*30e9*t);
    
     if  (mod(n,2) == 1)
         % plot (not shown)%
-        pcolor(Ez)
+        pcolor(-log(abs(Ez)+1e-30))
         shading interp
         colorbar
-        caxis([0 .5])
+        %caxis([0 .5])
         title({['Nt = ',num2str(n)],['Time: ',num2str(t),' sec.']});
         
         pause(.005)
@@ -63,7 +63,6 @@ for n = 0:1:(nt-1)
         for j = 2:1:ny-1
                 
                 Hx(i,j) = Hx(i,j) - (dt/mi_0)*(Ez(i,j)-Ez(i-1,j))/dy;
-                
                 Hy(i,j) = Hy(i,j) + (dt/mi_0)*(Ez(i,j)-Ez(i,j-1))/dx;
         end
     end
@@ -80,6 +79,8 @@ for n = 0:1:(nt-1)
                 Ez(i,j) = Ez(i,j) + (dt/eps)*((Hy(i,j+1)-Hy(i,j))/dx - (Hx(i+1,j)-Hx(i,j))/dy);
         end
     end
+    
+    % colocar a antena
     
     % safety fisrt :D %
     if Ez(px2 +1, py2 +1) > 2
