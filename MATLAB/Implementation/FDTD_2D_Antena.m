@@ -1,4 +1,3 @@
-%% Simulation Parameters
 close all;
 clear;
 clc
@@ -30,8 +29,8 @@ T = 3*(time_tot*deltat/10);
 std_dev = 7.005203380146562e-11;
 
 %Inicializando antena
-Ax = 220;
-Ay = 100;
+Ax = xdim/2-90;
+Ay = ydim/3;
 BoxLeftSide = zeros(5,1);
 BoxTop = zeros(1,6);
 BoxBottom = zeros(1,8);
