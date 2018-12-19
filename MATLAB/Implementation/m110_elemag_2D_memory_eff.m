@@ -2,7 +2,7 @@
 close all; clear; clc
 
 %numbero of space and time points
-nx = 300;
+nx = 500;
 ny = nx;
 nt = 1000;
 
