@@ -2,13 +2,13 @@
 close all; clear; clc
 
 %numbero of space and time points
-nx = 100;
+nx = 500;
 ny = nx;
 nt = 1000;
 
 %constants
 eps_0 = 8.854e-12;
-eps_1 = eps_0 * 5;
+eps_1 = eps_0 * 2;
 mi_0 = pi*4e-7;
 C_0 = 299792458; 	% m/s
 
@@ -30,8 +30,8 @@ std_dev = 7.005203380146562e-11;
 close all;
 
 %Inicializando antena
-Ax = nx - 80;
-Ay = ny - 80;
+Ax = 220;
+Ay = 100;
 BoxLeftSide = zeros(5,1);
 BoxTop = zeros(1,6);
 BoxBottom = zeros(1,8);
@@ -63,8 +63,10 @@ px3 = px1 + 2;     py3 = py1;
 % so the figure won't show up%
 figr = figure('Visible', 'On' );
 
-colormap('jet');
-
+%colormap('jet');
+%colormap('colorcube');
+%colormap('prism');
+colormap('hsv');
 for n = 0:1:(nt-1)
 	t = n*dt;
     
@@ -80,7 +82,6 @@ for n = 0:1:(nt-1)
         colorbar
         %caxis([0 .5])
         title({['Nt = ',num2str(n)],['Time: ',num2str(t),' sec.']});
-        
         pause(.005)
     end
     pause(.005)
@@ -95,15 +96,14 @@ for n = 0:1:(nt-1)
     
     for i = 1:1:nx-1
         for j = 1:1:ny-1
-            if(i>50)
+            if(i>nx/2)
                 eps = eps_1;
-            elseif (i == 50)
+            elseif (i == nx/2)
                 eps = (eps_0 + eps_1)/2;
             else
                 eps = eps_0;
             end 
-                Ez(i,j) = Ez(i,j) + (dt/eps)*((Hy(i,j+1)-Hy(i,j))/dx - (Hx(i+1,j)-Hx(i,j))/dy);
-        end
+                Ez(i,j) = Ez(i,j) + (dt/eps)*((Hy(i,j+1)-Hy(i,j))/dx - (Hx(i+1,j)-Hx(i,j))/dy);        end
     end
     
     % colocar a antena
