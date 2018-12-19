@@ -2,13 +2,13 @@
 close all; clear; clc
 
 %numbero of space and time points
-nx = 500;
+nx = 1500;
 ny = nx;
 nt = 1000;
 
 %constants
 eps_0 = 8.854e-12;
-eps_1 = eps_0 * 2;
+eps_1 = eps_0 * 81;
 mi_0 = pi*4e-7;
 C_0 = 299792458; 	% m/s
 
@@ -18,7 +18,7 @@ Hy = zeros(nx,nx);
 Ez = zeros(nx,nx);
 
 %diferenctial elements
-dx = 1e-3;              % 0.001 meters
+dx = 1e-4;              % 0.0001 meters
 dy = dx;
 dt = (0.99/(C_0*sqrt(1/(dx.^2)+1/(dy.^2))));     %formula de estabilidade
 
@@ -30,8 +30,8 @@ std_dev = 7.005203380146562e-11;
 close all;
 
 %Inicializando antena
-Ax = 220;
-Ay = 100;
+Ax = nx/2-90;
+Ay = ny/3;
 BoxLeftSide = zeros(5,1);
 BoxTop = zeros(1,6);
 BoxBottom = zeros(1,8);
@@ -82,6 +82,8 @@ for n = 0:1:(nt-1)
         colorbar
         %caxis([0 .5])
         title({['Nt = ',num2str(n)],['Time: ',num2str(t),' sec.']});
+        hold on;
+        plot ([py2, ny-px2+py2],[px2, ny],'k','linewidth',1)
         pause(.005)
     end
     pause(.005)
