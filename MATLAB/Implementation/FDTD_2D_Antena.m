@@ -1,37 +1,37 @@
 %% Simulation Parameters
-close all; clear; clc
+close all;
+clear;
+clc
 
 %numbero of space and time points
-nx = 1500;
-ny = nx;
-nt = 1000;
+xdim = 1500;
+ydim = xdim;
+time_tot = 1000;
 
 %constants
-eps_0 = 8.854e-12;
-eps_1 = eps_0 * 81;
-mi_0 = pi*4e-7;
-C_0 = 299792458; 	% m/s
+epsilon0 = 8.854e-12;
+epsilon1 = epsilon0 * 2;
+mu0 = pi*4e-7;
+c = 299792458; 	% m/s
+S = 0.99; %Courant stability factor
 
 %fields
-Hx = zeros(nx,nx);
-Hy = zeros(nx,nx);
-Ez = zeros(nx,nx);
+Hx = zeros(xdim,xdim);
+Hy = zeros(xdim,xdim);
+Ez = zeros(xdim,xdim);
 
 %diferenctial elements
-dx = 1e-4;              % 0.0001 meters
-dy = dx;
-dt = (0.99/(C_0*sqrt(1/(dx.^2)+1/(dy.^2))));     %formula de estabilidade
+deltax = 1e-3;              % 0.001 meters
+deltay = deltax;
+deltat = (S/(c*sqrt(1/(deltax.^2)+1/(deltay.^2))));     %formula de estabilidade
 
-%variáveis auxiliares pra gaussiana
-T = 3*(nt*dt/10);
+%variÃ¡veis auxiliares pra gaussiana
+T = 3*(time_tot*deltat/10);
 std_dev = 7.005203380146562e-11;
 
-%% Simulate and Video
-close all;
-
 %Inicializando antena
-Ax = nx/2-90;
-Ay = ny/3;
+Ax = 220;
+Ay = 100;
 BoxLeftSide = zeros(5,1);
 BoxTop = zeros(1,6);
 BoxBottom = zeros(1,8);
@@ -56,56 +56,80 @@ for j = 1:1:5
 end
 
 % font position %
-px1 = Ax+1;      py1 = Ay+5;
-px2 = px1 + 1;     py2 = py1;
-px3 = px1 + 2;     py3 = py1;
+xsource1 = Ax+1;      
+ysource1 = Ay+5;
+xsource2 = xsource1 + 1;     
+ysource2 = ysource1;
+xsource3 = xsource1 + 2;
+ysource3 = ysource1;
 
+% settings to save video %
+orig_file = 'D:\Desktop\eletromag\';
+cd 'D:\Desktop\eletromag\';
+vid_obj = VideoWriter('FDTD_2D_Antena.avi');
+vid_obj.FrameRate = 30;
+cd (orig_file);
+%% Simulate and Video
+close all;
 % so the figure won't show up%
-figr = figure('Visible', 'On' );
+figr = figure('Visible', 'Off' );
+
+% wait bar %
+wb = waitbar(0,'Please wait...','Name','Calculating and Generating video');
+
+% open video object%
+open(vid_obj);
 
 %colormap('jet');
 %colormap('colorcube');
 %colormap('prism');
 colormap('hsv');
-for n = 0:1:(nt-1)
-	t = n*dt;
+
+for n = 0:1:time_tot
+	
+    t = n*deltat;
     
     % font %    
-    Ez(px1, py1) = exp(-((t-T).^2)/((std_dev.^2)*.2))* sin(2*pi*30e9*t);
-    Ez(px2, py2) = exp(-((t-T).^2)/((std_dev.^2)*.2))* sin(2*pi*30e9*t);
-    Ez(px3, py3) = exp(-((t-T).^2)/((std_dev.^2)*.2))* sin(2*pi*30e9*t);
+    Ez(xsource1, ysource1) = exp(-((t-T).^2)/((std_dev.^2)*.2))* sin(2*pi*30e9*t);
+    Ez(xsource2, ysource2) = exp(-((t-T).^2)/((std_dev.^2)*.2))* sin(2*pi*30e9*t);
+    Ez(xsource3, ysource3) = exp(-((t-T).^2)/((std_dev.^2)*.2))* sin(2*pi*30e9*t);
    
     if  (mod(n,2) == 1)
         % plot (not shown)%
         pcolor(-log(abs(Ez)+1e-30))
         shading interp
         colorbar
-        %caxis([0 .5])
         title({['Nt = ',num2str(n)],['Time: ',num2str(t),' sec.']});
-        hold on;
-        plot ([py2, ny-px2+py2],[px2, ny],'k','linewidth',1)
+		hold on;
+        plot ([ysource2, ydim-xsource2+ysource2],[xsource2, ydim],'k','linewidth',1);
+		hold off
         pause(.005)
+        % writing video from the figure %
+        img = getframe(figr);
+        writeVideo(vid_obj, img);
     end
     pause(.005)
+     % wait bar %
+    waitbar(n/time_tot, wb, {'Please wait...';['Nt = ',num2str(n),' /',num2str(time_tot)]});
     
-    for i = 2:1:nx-1
-        for j = 2:1:ny-1
-                
-                Hx(i,j) = Hx(i,j) - (dt/mi_0)*(Ez(i,j)-Ez(i-1,j))/dy;
-                Hy(i,j) = Hy(i,j) + (dt/mi_0)*(Ez(i,j)-Ez(i,j-1))/dx;
+    for i = 2:1:xdim-1
+        for j = 2:1:ydim-1
+          Hx(i,j) = Hx(i,j) - (deltat/mu0)*(Ez(i,j)-Ez(i-1,j))/deltay;
+          Hy(i,j) = Hy(i,j) + (deltat/mu0)*(Ez(i,j)-Ez(i,j-1))/deltax;
         end
     end
     
-    for i = 1:1:nx-1
-        for j = 1:1:ny-1
-            if(i>nx/2)
-                eps = eps_1;
-            elseif (i == nx/2)
-                eps = (eps_0 + eps_1)/2;
+    for i = 1:1:xdim-1
+        for j = 1:1:ydim-1
+            if(i>xdim/2)
+                eps = epsilon1;
+            elseif (i == xdim/2)
+                eps = (epsilon0 + epsilon1)/2;
             else
-                eps = eps_0;
+                eps = epsilon0;
             end 
-                Ez(i,j) = Ez(i,j) + (dt/eps)*((Hy(i,j+1)-Hy(i,j))/dx - (Hx(i+1,j)-Hx(i,j))/dy);        end
+                Ez(i,j) = Ez(i,j) + (deltat/eps)*((Hy(i,j+1)-Hy(i,j))/deltax - (Hx(i+1,j)-Hx(i,j))/deltay);        
+        end
     end
     
     % colocar a antena
@@ -116,12 +140,11 @@ for n = 0:1:(nt-1)
     Ez((Ax):(Ax)+8,(Ay)+7:(Ay)+16) = Ez((Ax):(Ax)+8,(Ay)+7:(Ay)+16).*BottomStep;
     Ez((Ax)+15:(Ax)+24,(Ay)+14) = TopDiag;
     Ez((Ax)+7:-1:(Ax)+3,(Ay)+17:(Ay)+21) = Ez((Ax)+7:-1:(Ax)+3,(Ay)+17:(Ay)+21).*BottomDiag;
-
-    
-    % safety fisrt :D %
-    if Ez(px2 +1, py2 +1) > 2
-        disp({'Error';['Ez = ', num2str(Ez(px2 +1, py2 +1))];['Iteration: ',num2str(n)]});
-        break
-    end
 end
+waitbar(1, wb, {'Please wait...';'Saving...'});
+
+% close and finish video%
+close(vid_obj);
 pause(.1)
+% close wait bar%
+delete(wb)
