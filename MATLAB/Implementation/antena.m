@@ -33,7 +33,7 @@ BottomDiag = TopDiag;
 pane(xdim-400:1:(xdim-400)+4,ydim-400) = BoxLeftSide;
 pane((xdim-400)-1,(ydim-400):(ydim-400)+7) = BoxBottom;
 pane((xdim-400)+5,(ydim-400):(ydim-400)+5) = BoxTop;
-pane((xdim-400)+6:(xdim-400)+14,(ydim-400)+5:(ydim-400)+13) = TopStep;
+pane((xdim-400)+6:(xdim-400)+14,(ydim-400)+5:(ydim-400)+13) = pane((xdim-400)+6:(xdim-400)+14,(ydim-400)+5:(ydim-400)+13).*TopStep;
 pane((xdim-400):(xdim-400)+8,(ydim-400)+7:(ydim-400)+15) = pane((xdim-400):(xdim-400)+8,(ydim-400)+7:(ydim-400)+15).*BottomStep;
 %pane((xdim-400)+15:(xdim-400)+25,(ydim-400)+13:(ydim-400)+16) = TopDiag;
 
