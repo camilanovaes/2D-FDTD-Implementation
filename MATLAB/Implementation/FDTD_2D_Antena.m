@@ -20,7 +20,7 @@ Hy = zeros(xdim,xdim);
 Ez = zeros(xdim,xdim);
 
 %diferenctial elements
-deltax = 1e-3;              % 0.001 meters
+deltax = 1e-4;              % 0.001 meters
 deltay = deltax;
 deltat = (S/(c*sqrt(1/(deltax.^2)+1/(deltay.^2))));     %formula de estabilidade
 
@@ -63,8 +63,8 @@ xsource3 = xsource1 + 2;
 ysource3 = ysource1;
 
 % settings to save video %
-orig_file = 'D:\Desktop\eletromag\';
-cd 'D:\Desktop\eletromag\';
+orig_file = 'C:\Users\felip\Documents\UFPA\Eletromagnetismo\Projeto\';
+cd 'C:\Users\felip\Documents\UFPA\Eletromagnetismo\Projeto\';
 vid_obj = VideoWriter('FDTD_2D_Antena.avi');
 vid_obj.FrameRate = 30;
 cd (orig_file);
