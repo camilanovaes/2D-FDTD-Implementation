@@ -7,8 +7,8 @@ xdim = 500;                      % Grid Dimension X
 ydim = xdim;                      % Grid Dimension Y
 time_tot = 1000;                  % Total of time steps
 
-epsilon0 = 8.854e-12;             % Permittivity of free space (Media 01)
-epsilon1 = epsilon0 * 2;          % Permittivity of Media 02
+epsilon0 = 8.854e-12;             % Permittivity of free space (Medium 01)
+epsilon1 = epsilon0 * 2;          % Permittivity of Medium 02
 mu0 = pi*4e-7;                    % Permeability of free space
 c = 299792458;                    % Speed of electromagnetic wave (m/s)
 S = 0.99;                         % Courant stability factor
