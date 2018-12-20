@@ -1,9 +1,9 @@
 % Clearing variables in memory and Matlab command screen
 close all;
 clear;
-clc
+clc;
 
-xdim = 1500;                      % Grid Dimension X
+xdim = 500;                      % Grid Dimension X
 ydim = xdim;                      % Grid Dimension Y
 time_tot = 1000;                  % Total of time steps
 
@@ -27,8 +27,8 @@ T = 3*(time_tot*deltat/10);
 std_dev = 7.005203380146562e-11;
 
 % Initialization of horn antenna
-Ax = xdim/2-90;
-Ay = ydim/3;
+Ax = 220;
+Ay = 100;
 BoxLeftSide = zeros(5,1);
 BoxTop = zeros(1,6);
 BoxBottom = zeros(1,8);
@@ -60,26 +60,7 @@ ysource2 = ysource1;
 xsource3 = xsource1 + 2;
 ysource3 = ysource1;
 
-% Settings to save video 
-orig_file = 'C:\Users\felip\Documents\UFPA\Eletromagnetismo\Projeto\';
-cd 'C:\Users\felip\Documents\UFPA\Eletromagnetismo\Projeto\';
-vid_obj = VideoWriter('FDTD_2D_Antena.avi');
-vid_obj.FrameRate = 30;
-cd (orig_file);
-%% Simulate and Video
-close all;
-% so the figure won't show up%
-figr = figure('Visible', 'Off' );
-
-% wait bar %
-wb = waitbar(0,'Please wait...','Name','Calculating and Generating video');
-
-% open video object%
-open(vid_obj);
-
-%colormap('jet');
-%colormap('colorcube');
-%colormap('prism');
+figr = figure('Visible', 'On' );
 colormap('hsv');
 
 for n = 0:1:time_tot
@@ -97,15 +78,11 @@ for n = 0:1:time_tot
         title({['Nt = ',num2str(n)],['Time: ',num2str(t),' sec.']});
 		hold on;
         plot ([ysource2, ydim-xsource2+ysource2],[xsource2, ydim],'k','linewidth',1);
-		hold off
+        hold off
         pause(.005)
-        % writing video from the figure %
-        img = getframe(figr);
-        writeVideo(vid_obj, img);
+
     end
     pause(.005)
-     % wait bar %
-    waitbar(n/time_tot, wb, {'Please wait...';['Nt = ',num2str(n),' /',num2str(time_tot)]});
     
     for i = 2:1:xdim-1
         for j = 2:1:ydim-1
@@ -117,11 +94,11 @@ for n = 0:1:time_tot
     for i = 1:1:xdim-1
         for j = 1:1:ydim-1
             if(i>xdim/2)
-                eps = epsilon1;
+                eps = epsilon1;                 % Media 02
             elseif (i == xdim/2)
-                eps = (epsilon0 + epsilon1)/2;
+                eps = (epsilon0 + epsilon1)/2;  % Interface
             else
-                eps = epsilon0;
+                eps = epsilon0;                 % Media 01
             end 
                 Ez(i,j) = Ez(i,j) + (deltat/eps)*((Hy(i,j+1)-Hy(i,j))/deltax - (Hx(i+1,j)-Hx(i,j))/deltay);        
         end
@@ -137,10 +114,4 @@ for n = 0:1:time_tot
     Ez((Ax)+7:-1:(Ax)+3,(Ay)+17:(Ay)+21) = Ez((Ax)+7:-1:(Ax)+3,(Ay)+17:(Ay)+21).*BottomDiag;
     
 end
-waitbar(1, wb, {'Please wait...';'Saving...'});
-
-% close and finish video%
-close(vid_obj);
 pause(.1)
-% close wait bar%
-delete(wb)
