@@ -3,9 +3,9 @@ close all;
 clear;
 clc;
 
-xdim = 500;                      % Grid Dimension X
+xdim = 2000;                      % Grid Dimension X
 ydim = xdim;                      % Grid Dimension Y
-time_tot = 1000;                  % Total of time steps
+time_tot = 2000;                  % Total of time steps
 
 epsilon0 = 8.854e-12;             % Permittivity of free space (Medium 01)
 epsilon1 = epsilon0 * 2;          % Permittivity of Medium 02
@@ -23,12 +23,11 @@ deltay = deltax;                                        % Spatial grid step leng
 deltat = (S/(c*sqrt(1/(deltax.^2)+1/(deltay.^2))));     % Temporal grid step obtained using Courant condition
 
 % Gaussian font parameters
-T = 3*(time_tot*deltat/10);
-sd = 7.005203380146562e-11;
+T = (time_tot*deltat/10);
 
 % Initialization of horn antenna
-Ax = 150;
-Ay = 100;
+Ax = 750;
+Ay = 500;
 BoxLeftSide = zeros(5,1);
 BoxTop = zeros(1,6);
 BoxBottom = zeros(1,8);
@@ -72,9 +71,9 @@ for n = 0:1:time_tot
   t = n*deltat;
     
   % Font    
-  Ez(xsource1, ysource1) = exp(-((t-T).^2)/((sd.^2)*.2))* sin(2*pi*30e9*t);
-  Ez(xsource2, ysource2) = exp(-((t-T).^2)/((sd.^2)*.2))* sin(2*pi*30e9*t);
-  Ez(xsource3, ysource3) = exp(-((t-T).^2)/((sd.^2)*.2))* sin(2*pi*30e9*t);
+  Ez(xsource1, ysource1) = exp(-((t-(3*T))^2)/((T^2)))* sin(2*pi*30e9*t);
+  Ez(xsource2, ysource2) = exp(-((t-(3*T))^2)/((T^2)))* sin(2*pi*30e9*t);
+  Ez(xsource3, ysource3) = exp(-((t-(3*T))^2)/((T^2)))* sin(2*pi*30e9*t);
    
   if (mod(n,2) == 1)
     pcolor(-log(abs(Ez)+1e-30))
