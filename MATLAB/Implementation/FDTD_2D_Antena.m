@@ -20,7 +20,7 @@ Hy = zeros(xdim,xdim);
 Ez = zeros(xdim,xdim);
 
 %diferenctial elements
-deltax = 1e-4;              % 0.001 meters
+deltax = 1e-4;              % 0.0001 meters
 deltay = deltax;
 deltat = (S/(c*sqrt(1/(deltax.^2)+1/(deltay.^2))));     %formula de estabilidade
 
