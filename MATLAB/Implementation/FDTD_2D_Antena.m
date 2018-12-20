@@ -1,34 +1,32 @@
+% Clearing variables in memory and Matlab command screen
 close all;
 clear;
 clc
 
-%numbero of space and time points
-xdim = 1500;
-ydim = xdim;
-time_tot = 1000;
+xdim = 1500;                      % Grid Dimension X
+ydim = xdim;                      % Grid Dimension Y
+time_tot = 1000;                  % Total of time steps
 
-%constants
-epsilon0 = 8.854e-12;
-epsilon1 = epsilon0 * 2;
-mu0 = pi*4e-7;
-c = 299792458; 	% m/s
-S = 0.99; %Courant stability factor
+epsilon0 = 8.854e-12;             % Permittivity of free space (Media 01)
+epsilon1 = epsilon0 * 2;          % Permittivity of Media 02
+mu0 = pi*4e-7;                    % Permeability of free space
+c = 299792458;                    % Speed of electromagnetic wave (m/s)
+S = 0.99;                         % Courant stability factor
 
-%fields
+% Initialization of field matrices
 Hx = zeros(xdim,xdim);
 Hy = zeros(xdim,xdim);
 Ez = zeros(xdim,xdim);
 
-%diferenctial elements
-deltax = 1e-4;              % 0.0001 meters
-deltay = deltax;
-deltat = (S/(c*sqrt(1/(deltax.^2)+1/(deltay.^2))));     %formula de estabilidade
+deltax = 1e-4;                                          % Spatial grid step length -> dx: 0.0001 meters
+deltay = deltax;                                        % Spatial grid step length -> dy: 0.0001 meters
+deltat = (S/(c*sqrt(1/(deltax.^2)+1/(deltay.^2))));     % Temporal grid step obtained using Courant condition
 
-%variáveis auxiliares pra gaussiana
+% Gaussian font parameters
 T = 3*(time_tot*deltat/10);
 std_dev = 7.005203380146562e-11;
 
-%Inicializando antena
+% Initialization of horn antenna
 Ax = xdim/2-90;
 Ay = ydim/3;
 BoxLeftSide = zeros(5,1);
@@ -54,7 +52,7 @@ for j = 1:1:5
     BottomDiag(j,j) = 0;
 end
 
-% font position %
+% Font position
 xsource1 = Ax+1;      
 ysource1 = Ay+5;
 xsource2 = xsource1 + 1;     
@@ -62,7 +60,7 @@ ysource2 = ysource1;
 xsource3 = xsource1 + 2;
 ysource3 = ysource1;
 
-% settings to save video %
+% Settings to save video 
 orig_file = 'C:\Users\felip\Documents\UFPA\Eletromagnetismo\Projeto\';
 cd 'C:\Users\felip\Documents\UFPA\Eletromagnetismo\Projeto\';
 vid_obj = VideoWriter('FDTD_2D_Antena.avi');
@@ -85,16 +83,14 @@ open(vid_obj);
 colormap('hsv');
 
 for n = 0:1:time_tot
-	
     t = n*deltat;
     
-    % font %    
+    % Font    
     Ez(xsource1, ysource1) = exp(-((t-T).^2)/((std_dev.^2)*.2))* sin(2*pi*30e9*t);
     Ez(xsource2, ysource2) = exp(-((t-T).^2)/((std_dev.^2)*.2))* sin(2*pi*30e9*t);
     Ez(xsource3, ysource3) = exp(-((t-T).^2)/((std_dev.^2)*.2))* sin(2*pi*30e9*t);
    
     if  (mod(n,2) == 1)
-        % plot (not shown)%
         pcolor(-log(abs(Ez)+1e-30))
         shading interp
         colorbar
@@ -131,7 +127,7 @@ for n = 0:1:time_tot
         end
     end
     
-    % colocar a antena
+    % Boundary Conditions for horn antenna
     Ez(Ax:1:(Ax)+4,Ay) = BoxLeftSide;
     Ez((Ax)-1,(Ay):(Ay)+7) = BoxBottom;
     Ez((Ax)+5,(Ay):(Ay)+5) = BoxTop;
@@ -139,6 +135,7 @@ for n = 0:1:time_tot
     Ez((Ax):(Ax)+8,(Ay)+7:(Ay)+16) = Ez((Ax):(Ax)+8,(Ay)+7:(Ay)+16).*BottomStep;
     Ez((Ax)+15:(Ax)+24,(Ay)+14) = TopDiag;
     Ez((Ax)+7:-1:(Ax)+3,(Ay)+17:(Ay)+21) = Ez((Ax)+7:-1:(Ax)+3,(Ay)+17:(Ay)+21).*BottomDiag;
+    
 end
 waitbar(1, wb, {'Please wait...';'Saving...'});
 
