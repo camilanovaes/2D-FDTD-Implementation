@@ -3,7 +3,7 @@ close all;
 clear;
 clc;
 
-xdim = 500;                      % Grid Dimension X
+xdim = 1500;                      % Grid Dimension X
 ydim = xdim;                      % Grid Dimension Y
 time_tot = 1000;                  % Total of time steps
 
@@ -27,8 +27,8 @@ T = 3*(time_tot*deltat/10);
 std_dev = 7.005203380146562e-11;
 
 % Initialization of horn antenna
-Ax = 220;
-Ay = 100;
+Ax = xdim/2-90;
+Ay = ydim/3;
 BoxLeftSide = zeros(5,1);
 BoxTop = zeros(1,6);
 BoxBottom = zeros(1,8);
